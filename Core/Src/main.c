@@ -213,6 +213,8 @@ int main(void)
     speed_control();
     spray_control();
 
+
+    
     // ECD = Get_Encoder_Value();
 
     // OLED_Printf(0,40,OLED_6X8, "bfECD:%05d", ECD);
