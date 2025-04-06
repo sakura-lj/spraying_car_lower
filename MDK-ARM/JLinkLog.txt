@@ -1,0 +1,102 @@
+T27F4 000:181.329   SEGGER J-Link V7.96k Log File
+T27F4 000:181.526   DLL Compiled: Jun  5 2024 13:20:19
+T27F4 000:181.557   Logging started @ 2025-03-23 07:51
+T27F4 000:181.600   Process: D:\Keil_5MDK\UV4\UV4.exe
+T27F4 000:181.632 - 181.627ms
+T27F4 000:181.664 JLINK_SetWarnOutHandler(...)
+T27F4 000:181.692 - 0.030ms
+T27F4 000:181.722 JLINK_OpenEx(...)
+T27F4 000:184.659   Firmware: J-Link V9 compiled May  7 2021 16:26:12
+T27F4 000:185.270   Firmware: J-Link V9 compiled May  7 2021 16:26:12
+T27F4 000:185.452   Decompressing FW timestamp took 116 us
+T27F4 000:190.905   Hardware: V9.50
+T27F4 000:190.955   S/N: 63528771
+T27F4 000:191.002   OEM: SEGGER
+T27F4 000:191.048   Feature(s): RDI, GDB, FlashDL, FlashBP, JFlash
+T27F4 000:191.504   Bootloader: (Could not read)
+T27F4 000:192.082   TELNET listener socket opened on port 19021
+T27F4 000:192.386   WEBSRV WEBSRV_Init(): Starting webserver thread(s)
+T27F4 000:193.667   WEBSRV Webserver running on local port 19080
+T27F4 000:193.956   Looking for J-Link GUI Server exe at: D:\Keil_5MDK\ARM\Segger\JLinkGUIServer.exe
+T27F4 000:194.280   Looking for J-Link GUI Server exe at: D:\Program Files\JLink\JLinkGUIServer.exe
+T27F4 000:194.396   Forking J-Link GUI Server: D:\Program Files\JLink\JLinkGUIServer.exe
+T27F4 000:222.619   J-Link GUI Server info: "J-Link GUI server V7.96k "
+T27F4 000:226.531 - 44.795ms returns "O.K."
+T27F4 000:226.587 JLINK_GetEmuCaps()
+T27F4 000:226.616 - 0.026ms returns 0xB9FF7BBF
+T27F4 000:226.644 JLINK_TIF_GetAvailable(...)
+T27F4 000:226.805 - 0.162ms
+T27F4 000:226.850 JLINK_SetErrorOutHandler(...)
+T27F4 000:226.885 - 0.035ms
+T27F4 000:226.932 JLINK_ExecCommand("ProjectFile = "E:\Desktop\the-spraying-car\spraying_car\MDK-ARM\JLinkSettings.ini"", ...). 
+T27F4 000:238.805   Ref file found at: D:\Keil_5MDK\ARM\Segger\JLinkDevices.ref
+T27F4 000:239.055   REF file references invalid XML file: D:\Program Files\JLink\JLinkDevices.xml
+T27F4 000:240.358 - 13.428ms returns 0x00
+T27F4 000:240.398 JLINK_ExecCommand("Device = STM32F407VETx", ...). 
+T27F4 000:240.771   Device "STM32F407VE" selected.
+T27F4 000:241.394 - 0.970ms returns 0x00
+T27F4 000:241.426 JLINK_ExecCommand("DisableConnectionTimeout", ...). 
+T27F4 000:241.454   ERROR: Unknown command
+T27F4 000:241.488 - 0.036ms returns 0x01
+T27F4 000:241.513 JLINK_GetHardwareVersion()
+T27F4 000:241.538 - 0.022ms returns 95000
+T27F4 000:241.562 JLINK_GetDLLVersion()
+T27F4 000:241.585 - 0.022ms returns 79611
+T27F4 000:241.609 JLINK_GetOEMString(...)
+T27F4 000:241.632 JLINK_GetFirmwareString(...)
+T27F4 000:241.656 - 0.023ms
+T27F4 000:241.682 JLINK_GetDLLVersion()
+T27F4 000:241.704 - 0.022ms returns 79611
+T27F4 000:241.729 JLINK_GetCompileDateTime()
+T27F4 000:241.752 - 0.023ms
+T27F4 000:241.786 JLINK_GetFirmwareString(...)
+T27F4 000:241.809 - 0.022ms
+T27F4 000:241.833 JLINK_GetHardwareVersion()
+T27F4 000:241.856 - 0.023ms returns 95000
+T27F4 000:241.880 JLINK_GetSN()
+T27F4 000:241.903 - 0.022ms returns 63528771
+T27F4 000:241.926 JLINK_GetOEMString(...)
+T27F4 000:241.952 JLINK_TIF_Select(JLINKARM_TIF_SWD)
+T27F4 000:242.462 - 0.509ms returns 0x00
+T27F4 000:242.495 JLINK_HasError()
+T27F4 000:242.527 JLINK_SetSpeed(5000)
+T27F4 000:242.613 - 0.087ms
+T27F4 000:242.949 JLINK_HasError()
+T27F4 000:242.980 JLINK_SetResetType(JLINKARM_RESET_TYPE_NORMAL)
+T27F4 000:243.003 - 0.024ms returns JLINKARM_RESET_TYPE_NORMAL
+T27F4 000:243.042 JLINK_Reset()
+T27F4 000:243.202   InitTarget() start
+T27F4 000:243.243    J-Link Script File: Executing InitTarget()
+T27F4 000:243.374   SWD selected. Executing JTAG -> SWD switching sequence.
+T27F4 000:244.589   DAP initialized successfully.
+T27F4 015:396.082   
+  ***** Error: 
+T27F4 015:396.131   Communication timed out: Requested 8 bytes, received 0 bytes !
+T27F4 015:396.205   Can not attach to CPU. Trying connect under reset.
+T27F4 015:447.138   SWD selected. Executing JTAG -> SWD switching sequence.
+T27F4 015:447.317   Error: Failed to initialized DAP.
+T27F4 015:447.358   Connecting to CPU via connect under reset failed.
+T27F4 015:497.714   InitTarget() end - Took 15.2s
+T27F4 015:497.883   Connect failed. Resetting via Reset pin and trying again.
+T27F4 015:558.501   InitTarget() start
+T27F4 015:558.582    J-Link Script File: Executing InitTarget()
+T27F4 015:558.621   SWD selected. Executing JTAG -> SWD switching sequence.
+T27F4 015:558.784   Error: Failed to initialized DAP.
+T27F4 015:558.835   Can not attach to CPU. Trying connect under reset.
+T27F4 015:609.766   SWD selected. Executing JTAG -> SWD switching sequence.
+T27F4 015:609.963   Error: Failed to initialized DAP.
+T27F4 015:610.018   Connecting to CPU via connect under reset failed.
+T27F4 015:660.842   InitTarget() end - Took 102ms
+T27F4 015:660.899 - 15417.856ms
+T27F4 015:660.931 JLINK_GetId()
+T27F4 015:660.960 - 0.028ms returns 0x00000000
+T27F4 015:660.995 JLINK_GetId()
+T27F4 015:661.022 - 0.026ms returns 0x00000000
+T372C 015:661.163   
+  ***** Error: Connection to emulator lost!
+T27F4 015:669.178 JLINK_GetFirmwareString(...)
+T27F4 015:669.222 - 0.045ms
+T27F4 023:431.808 JLINK_Close()
+T27F4 023:443.520 - 11.711ms
+T27F4 023:443.562   
+T27F4 023:443.588   Closed
