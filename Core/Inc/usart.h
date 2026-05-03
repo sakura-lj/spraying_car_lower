@@ -44,7 +44,7 @@ void MX_USART1_UART_Init(void);
 void MX_USART2_UART_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-void Uart_Rxagain(UART_HandleTypeDef *huart);
+void Uart_Rxopen(UART_HandleTypeDef *huart);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

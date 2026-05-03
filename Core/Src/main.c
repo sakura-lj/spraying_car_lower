@@ -32,6 +32,7 @@
 #include "string.h"
 #include "Encoder.h"
 #include "turn.h"
+#include "upper.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -175,24 +176,32 @@ int main(void)
   MX_TIM8_Init();
   MX_TIM5_Init();
   /* USER CODE BEGIN 2 */
-  // Uart_Rxagain(&huart1);  // 重新开启串口接收中断，参数为想要开启的串口号
+  // 首先初始化OLED，显示启动信息
   OLED_Init();
+  OLED_Clear();
+  OLED_ShowString(0, 0, "System Starting...", OLED_6X8);
+  OLED_Update();
+  HAL_Delay(1000);  // 延时1秒显示启动信息
+  
+  Uart_Rxopen(&huart1);  // 重新开启串口接收中断，参数为想要开启的串口号
+  // Uart_Rxopen(&huart2);  // 重新开启串口接收中断，参数为想要开启的串口号  
   CH_Init();
   Car_Init();   // 初始化小车启动dac
   Encoder_open();  // 初始化编码器
   Step_Motor_Init();  // 初始化步进电机
+  upper_init();  // 初始化上位机通信
   __HAL_TIM_SET_COUNTER(&htim5, 0);  //清零编码器值
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  OLED_ShowString(0, 0, "CH3:0000", OLED_6X8);  //显示CH3的
-  OLED_ShowString(0, 8, "CH4:0000", OLED_6X8);  //显示CH4的
-  OLED_ShowString(0, 16, "CH5:0000", OLED_6X8);  //显示CH5的
-  OLED_ShowString(0, 24, "CH6:0000", OLED_6X8);  //显示CH6的
-  OLED_ShowString(0, 32, "CH7:0000", OLED_6X8);  //显示CH7的
-  OLED_ShowString(0, 40, "ECD:0000", OLED_6X8);  //显示CH7的
-  OLED_Update();
+  // OLED_ShowString(0, 0, "CH3:0000", OLED_6X8);  //显示CH3的
+  // OLED_ShowString(0, 8, "CH4:0000", OLED_6X8);  //显示CH4的
+  // OLED_ShowString(0, 16, "CH5:0000", OLED_6X8);  //显示CH5的
+  // OLED_ShowString(0, 24, "CH6:0000", OLED_6X8);  //显示CH6的
+  // OLED_ShowString(0, 32, "CH7:0000", OLED_6X8);  //显示CH7的
+  // OLED_ShowString(0, 40, "ECD:0000", OLED_6X8);  //显示CH7的
+  // OLED_Update();
 
   while (1)
   {
@@ -211,18 +220,11 @@ int main(void)
     }
     direction_control();
     speed_control();
-    spray_control();
-
-
-
-    
+    spray_control();    
     // ECD = Get_Encoder_Value();
-
     // OLED_Printf(0,40,OLED_6X8, "bfECD:%05d", ECD);
     // OLED_Update();
-
     Step_Motor_Control();
-
     // ECD = Get_Encoder_Value();
     // OLED_Printf(0,48,OLED_6X8, "atECD:%05d", ECD);
     // OLED_Update();

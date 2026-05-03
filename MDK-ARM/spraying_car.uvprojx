@@ -425,6 +425,11 @@
               <FilePath>..\Core\Src\turn.c</FilePath>
             </File>
             <File>
+              <FileName>upper.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\upper.c</FilePath>
+            </File>
+            <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/main.c</FilePath>

@@ -6,6 +6,7 @@
 "spraying_car\car_drive.o"
 "spraying_car\encoder.o"
 "spraying_car\turn.o"
+"spraying_car\upper.o"
 "spraying_car\main.o"
 "spraying_car\gpio.o"
 "spraying_car\dac.o"

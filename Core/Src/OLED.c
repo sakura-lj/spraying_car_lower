@@ -79,7 +79,7 @@ uint8_t OLED_DisplayBuf[8][128];
 void OLED_W_SCL(uint8_t BitValue)
 {
     /* 根据 BitValue 的值，将 SCL 置高电平或者低电平 */
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, (BitValue == 0) ? GPIO_PIN_RESET : GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOE, GPIO_PIN_3, (BitValue == 0) ? GPIO_PIN_RESET : GPIO_PIN_SET);
     /* 如果单片机速度过快，可在此添加适量延时，以避免超出 I2C 通信的最大速度 */
     //...
 }
@@ -95,7 +95,7 @@ void OLED_W_SCL(uint8_t BitValue)
 void OLED_W_SDA(uint8_t BitValue)
 {
 	/*根据BitValue的值，将SDA置高电平或者低电平*/
-	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, (BitValue == 0) ? GPIO_PIN_RESET : GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOE, GPIO_PIN_4, (BitValue == 0) ? GPIO_PIN_RESET : GPIO_PIN_SET);
 	/*如果单片机速度过快，可在此添加适量延时，以避免超出I2C通信的最大速度*/
 	//...
 }

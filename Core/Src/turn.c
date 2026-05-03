@@ -193,12 +193,17 @@ void Step_Motor_Control(void)
     if (motor_running) {
         Step_Motor_Stop();
     }
-    /* 获取当前编码器位置 */
-    current_position = Get_Encoder_Value();
     /* 更新当前CH4值 */
     using_CH4 = CH4_value;
+    set_target_position(using_CH4);
+}
+
+void set_target_position(uint8_t target)
+{
+    /* 获取当前编码器位置 */
+    current_position = Get_Encoder_Value();
     /* 计算目标位置 */
-    target_position = Calculate_Target_Position(using_CH4);
+    target_position = Calculate_Target_Position(target);
     /* 计算步数差值 */
     differ_position = target_position - current_position;
     /* 如果足够小，不需要转动 */

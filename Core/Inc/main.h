@@ -59,16 +59,16 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define eleRelay2_Pin GPIO_PIN_2
 #define eleRelay2_GPIO_Port GPIOE
+#define oledscl_Pin GPIO_PIN_3
+#define oledscl_GPIO_Port GPIOE
+#define oledsda_Pin GPIO_PIN_4
+#define oledsda_GPIO_Port GPIOE
 #define forward_Pin GPIO_PIN_0
 #define forward_GPIO_Port GPIOC
 #define backward_Pin GPIO_PIN_1
 #define backward_GPIO_Port GPIOC
 #define step_dir_Pin GPIO_PIN_5
 #define step_dir_GPIO_Port GPIOC
-#define oledscl_Pin GPIO_PIN_9
-#define oledscl_GPIO_Port GPIOD
-#define oledsda_Pin GPIO_PIN_10
-#define oledsda_GPIO_Port GPIOD
 #define buzzer_Pin GPIO_PIN_0
 #define buzzer_GPIO_Port GPIOD
 #define eleRelay1_Pin GPIO_PIN_1

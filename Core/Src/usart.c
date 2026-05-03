@@ -21,10 +21,6 @@
 #include "usart.h"
 
 /* USER CODE BEGIN 0 */
-#define rxbuffer_LEN 255
-uint8_t rxBuffer[rxbuffer_LEN];
-uint8_t rxBuffer1[rxbuffer_LEN];
-volatile uint8_t gps_data[27];
 
 /* USER CODE END 0 */
 
@@ -129,10 +125,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
     hdma_usart1_tx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
     hdma_usart1_tx.Init.Mode = DMA_NORMAL;
     hdma_usart1_tx.Init.Priority = DMA_PRIORITY_LOW;
-    hdma_usart1_tx.Init.FIFOMode = DMA_FIFOMODE_ENABLE;
-    hdma_usart1_tx.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_FULL;
-    hdma_usart1_tx.Init.MemBurst = DMA_MBURST_SINGLE;
-    hdma_usart1_tx.Init.PeriphBurst = DMA_PBURST_SINGLE;
+    hdma_usart1_tx.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
     if (HAL_DMA_Init(&hdma_usart1_tx) != HAL_OK)
     {
       Error_Handler();
@@ -285,17 +278,12 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 }
 
 /* USER CODE BEGIN 1 */
-void Uart_Rxagain(UART_HandleTypeDef *huart){   
-  HAL_UARTEx_ReceiveToIdle_DMA(huart, rxBuffer, rxbuffer_LEN);  
+// 添加外部缓冲区声明，使用upper.c中定义的缓冲区
+extern uint8_t rxBuffer[];
+extern const uint16_t RXBUFFER_LEN;
+
+void Uart_Rxopen(UART_HandleTypeDef *huart){   
+  HAL_UARTEx_ReceiveToIdle_DMA(huart, rxBuffer, 128);  // 使用固定长度128
 }
 
-void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size){
-  if(huart->Instance == USART1){
-    for (uint8_t i = 0; i < Size; i++)
-    {
-      rxBuffer1[i] = rxBuffer[i];
-    }
-    Uart_Rxagain(&huart1);
-  }
-}
 /* USER CODE END 1 */
