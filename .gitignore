@@ -56,3 +56,4 @@ dkms.conf
 .cmsis/
 .codeartsdoer/
 build/
+.clang-format
