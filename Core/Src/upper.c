@@ -11,19 +11,53 @@
 #include "turn.h"
 #include "main.h"
 #include "car_drive.h"
+#include "usbd_cdc_if.h"
 #include "OLED.h"  // 添加OLED头文件
+#include <string.h>   // strlen()
+#include <stdio.h>    // snprintf()
 
 // 调试模式控制宏 - 设置为1启用OLED调试显示，设置为0禁用OLED
 #define DEBUG_MODE 1  // 1: 调试模式(使用OLED), 0: 上机模式(不使用OLED)
 
 // OLED操作宏定义 - 根据调试模式控制OLED显示
 #if DEBUG_MODE
-    #define DEBUG_OLED_Clear()                          OLED_Clear()
-    #define DEBUG_OLED_ShowString(x, y, str)            OLED_ShowString(x, y, str, OLED_6X8)
-    #define DEBUG_OLED_ShowNum(x, y, num, len)          OLED_ShowNum(x, y, num, len, OLED_6X8)
-    #define DEBUG_OLED_ShowHexNum(x, y, num, len)       OLED_ShowHexNum(x, y, num, len, OLED_6X8)
-    #define DEBUG_OLED_Update()                         OLED_Update()
-    #define DEBUG_OLED_UpdateArea(x, y, w, h)           OLED_UpdateArea(x, y, w, h)
+    // 辅助宏：通过 USB CDC 发送格式化文本（忽略 BUSY，调试不阻塞）
+    #define DEBUG_CDC_SEND(str, len)  CDC_Transmit_FS((uint8_t*)(str), (uint16_t)(len))
+
+    // OLED 清屏 + USB 发送清除标记
+    #define DEBUG_OLED_Clear()  do { \
+        OLED_Clear(); \
+        DEBUG_CDC_SEND("[OLED CLEAR]\r\n", 14); \
+    } while(0)
+
+    // OLED 显示字符串 + USB 发送相同文本
+    #define DEBUG_OLED_ShowString(x, y, str)  do { \
+        OLED_ShowString(x, y, str, OLED_6X8); \
+        DEBUG_CDC_SEND(str, strlen(str)); \
+        DEBUG_CDC_SEND("\r\n", 2); \
+    } while(0)
+
+    // OLED 显示数字 + USB 发送十进制文本
+    #define DEBUG_OLED_ShowNum(x, y, num, len)  do { \
+        OLED_ShowNum(x, y, num, len, OLED_6X8); \
+        char _dbg_buf[24]; \
+        int _dbg_n = snprintf(_dbg_buf, sizeof(_dbg_buf), "%d\r\n", (int)(num)); \
+        if (_dbg_n > 0) DEBUG_CDC_SEND(_dbg_buf, (uint16_t)_dbg_n); \
+    } while(0)
+
+    // OLED 显示十六进制 + USB 发送 "0xXX\r\n"
+    #define DEBUG_OLED_ShowHexNum(x, y, num, len)  do { \
+        OLED_ShowHexNum(x, y, num, len, OLED_6X8); \
+        char _dbg_buf[24]; \
+        int _dbg_n = snprintf(_dbg_buf, sizeof(_dbg_buf), "0x%X\r\n", (unsigned int)(num)); \
+        if (_dbg_n > 0) DEBUG_CDC_SEND(_dbg_buf, (uint16_t)_dbg_n); \
+    } while(0)
+
+    // OLED 刷新（USB 不发送——此调用过于频繁，会淹没串口输出）
+    #define DEBUG_OLED_Update()  OLED_Update()
+
+    // OLED 区域刷新（USB 不发送——同上）
+    #define DEBUG_OLED_UpdateArea(x, y, w, h)  OLED_UpdateArea(x, y, w, h)
 #else
     #define DEBUG_OLED_Clear()                          ((void)0)
     #define DEBUG_OLED_ShowString(x, y, str)            ((void)0)
@@ -53,6 +87,13 @@ uint8_t received_byte;
 #define RXBUFFER_LEN 128
 uint8_t rxBuffer[RXBUFFER_LEN];
 const uint16_t RXBUFFER_LEN_CONST = RXBUFFER_LEN;  // 提供给外部的长度常量
+
+#define TXBUFFER_LEN (BUFFER_SIZE + 6)
+static uint8_t txBuffer[TXBUFFER_LEN];
+static uint8_t txPendingBuffer[TXBUFFER_LEN];
+static volatile uint8_t txBusy = 0;
+static volatile uint8_t txPending = 0;
+static volatile uint16_t txPendingLength = 0;
 
 // 车辆状态控制变量
 extern volatile uint8_t direction_state; // 方向状态：0-停止，1-前进，2-后退
@@ -131,12 +172,59 @@ int packData(uint8_t* Data, uint8_t type, uint8_t* data, int length) {
  * @retval 发送的数据长度，错误返回-1
  */
 int sendData(uint8_t* data, int length) {
+    if (data == NULL || length <= 0 || length > TXBUFFER_LEN) {
+        return -1;
+    }
+
+    // USB CDC 调试：将 STM32 发出的原始数据镜像到虚拟串口。
+    // 若 CDC 正忙则由 CDC_Transmit_FS 直接返回，不阻塞 USART1 DMA 发送。
+    CDC_Transmit_FS(data, (uint16_t)length);
+
+    if (txBusy) {
+        memcpy(txPendingBuffer, data, (size_t)length);
+        txPendingLength = (uint16_t)length;
+        txPending = 1;
+        return length;
+    }
+
+    memcpy(txBuffer, data, (size_t)length);
+    txBusy = 1;
+
     // 使用DMA方式发送数据
-    HAL_StatusTypeDef status = HAL_UART_Transmit_DMA(&huart1, data, length);
+    HAL_StatusTypeDef status = HAL_UART_Transmit_DMA(&huart1, txBuffer, (uint16_t)length);
     if (status != HAL_OK) {
+        txBusy = 0;
+        if (status == HAL_BUSY) {
+            memcpy(txPendingBuffer, data, (size_t)length);
+            txPendingLength = (uint16_t)length;
+            txPending = 1;
+            return length;
+        }
         return -1; // 发送失败返回-1
     }
     return length;
+}
+
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart) {
+    if (huart->Instance != USART1) {
+        return;
+    }
+
+    if (txPending) {
+        uint16_t length = txPendingLength;
+        memcpy(txBuffer, txPendingBuffer, (size_t)length);
+        txPending = 0;
+        txPendingLength = 0;
+
+        HAL_StatusTypeDef status = HAL_UART_Transmit_DMA(&huart1, txBuffer, length);
+        if (status == HAL_OK) {
+            txBusy = 1;
+        } else {
+            txBusy = 0;
+        }
+    } else {
+        txBusy = 0;
+    }
 }
 
 /**
@@ -366,6 +454,11 @@ static void parseData(PacketParser* parser, uint8_t byte) {
  */
 void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size){
     if (huart->Instance == USART1) {
+        // USB CDC 调试：将 USART1 收到的原始数据镜像到虚拟串口。
+        // 若 CDC 正忙则由 CDC_Transmit_FS 直接返回，调试转发允许丢帧。
+        uint8_t cdc_result = CDC_Transmit_FS(rxBuffer, Size);
+        (void)cdc_result;
+
         // 处理接收到的每个字节
         for (uint8_t i = 0; i < Size; i++) {
             received_byte = rxBuffer[i];
